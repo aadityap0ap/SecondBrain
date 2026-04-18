@@ -2,31 +2,28 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
+    "esModuleInterop": true,
     "rootDir": "./src",
     "outDir": "./dist",
 
-    // Interop (IMPORTANT for express import)
-    "esModuleInterop": true,
-
-    // Environment Settings (fixed for Node + Express)
-    "module": "commonjs",              // ✅ changed from nodenext
-    "moduleResolution": "node",        // ✅ added
-    "target": "es6",                   // ✅ simplified
-    "types": ["node"],                 // ✅ added
-
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "nodenext",
+    "target": "esnext",
+    "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
-    // npm install -D @types/node
+    // and npm install -D @types/node
 
     // Other Outputs
     "sourceMap": true,
-    // "declaration": true,            // ❌ not needed now
-    // "declarationMap": true,         // ❌ not needed now
+    "declaration": true,
+    "declarationMap": true,
 
     // Stricter Typechecking Options
-    // "noUncheckedIndexedAccess": true,       // optional
-    // "exactOptionalPropertyTypes": true,     // optional
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
 
     // Style Options
     // "noImplicitReturns": true,
@@ -38,22 +35,11 @@
 
     // Recommended Options
     "strict": true,
-
-    // ❌ Not needed for backend
-    // "jsx": "react-jsx",
-
-    // ❌ causing your error
+    "jsx": "react-jsx",
     "verbatimModuleSyntax": false,
-
-    // Optional but safe
     "isolatedModules": true,
-
-    // ❌ not needed
-    // "noUncheckedSideEffectImports": true,
-
-    // ❌ not needed
-    // "moduleDetection": "force",
-
-    "skipLibCheck": true
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
   }
 }
