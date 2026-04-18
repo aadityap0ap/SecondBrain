@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/aadityap0ap/SecondBrain#readme",
   "dependencies": {
+    "express": "^5.2.1",
     "typescript": "^6.0.3"
   }
 }
