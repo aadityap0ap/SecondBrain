@@ -1,0 +1,24 @@
+{
+  "name": "secondbrain",
+  "version": "1.0.0",
+  "description": "A replica of Brainly. Made for learning purpose.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aadityap0ap/SecondBrain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/aadityap0ap/SecondBrain/issues"
+  },
+  "homepage": "https://github.com/aadityap0ap/SecondBrain#readme",
+  "dependencies": {
+    "typescript": "^6.0.3"
+  }
+}
