@@ -13,5 +13,12 @@ export const userSchema = z.object({
     .regex(/[a-z]/, "Must contain at least one lowercase letter")
     .regex(/[0-9]/, "Must contain at least one number")
     .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
-})
+});
+
+export const contentSchema = z.object({
+    type : z.enum(["document","tweet","Youtube","link"]),
+    link: z.string().url("Invalid URL"),
+    title: z.string().min(1, "Title is required"),
+    tags: z.array(z.string()).nonempty("At least one tag required"),
+});
 

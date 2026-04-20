@@ -18,4 +18,24 @@ const userSchema = new Schema({
     password : String
 })
 
+const contentSchema = new Schema({
+  type : {type : String,
+    enum : ["document","tweet","youtube","link"],
+    requird : true,
+  },
+  link : {
+    type : String,
+    requird : true,
+  },
+  title : {
+    type : String,
+    required : true,
+  },
+  tags : {
+    type : [String],
+    required : true,
+  }
+})
+
+export const contentModel = model("Content",contentSchema);
 export const UserModel = model("Users",userSchema);
