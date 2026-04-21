@@ -1,11 +1,12 @@
 import express from "express";
-import { userSchema } from "./validations/userValidations";
-import { UserModel } from "./db";
+import { contentSchema, userSchema } from "./validations/userValidations";
+import { contentModel, UserModel } from "./db";
 import bcrypt from "bcrypt";
 import "./db";
 import jwt from "jsonwebtoken";
 
 import dotenv from "dotenv";
+import { authMiddleware } from "./validations/middleware";
 dotenv.config();
 
 
@@ -75,8 +76,32 @@ app.post("/signin",async(req,res) => {
     }
 })
 
-app.post("/content",(req,res) => {
-    
+app.post("/content",authMiddleware,async(req,res) => {
+    try{
+        const content = contentSchema.safeParse(req.body);
+        if(!content.success){
+            return res.status(411).json({
+                message : "Invalid Inputs",
+                errors : content.error.issues,
+            })
+        }
+        const{type,link,title,tags} = content.data;
+        await contentModel.create({
+            type,
+            link,
+            title,
+            tags
+        });
+        return res.status(200).json({
+            message : "Contents Saved SuccessFully!"
+        })
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({
+            message : "Server Side Error"
+        })
+    }
 })
 
 app.get("/content",(req,res) => {

@@ -21,11 +21,11 @@ const userSchema = new Schema({
 const contentSchema = new Schema({
   type : {type : String,
     enum : ["document","tweet","youtube","link"],
-    requird : true,
+    required : true,
   },
   link : {
     type : String,
-    requird : true,
+    required : true,
   },
   title : {
     type : String,
