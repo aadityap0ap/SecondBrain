@@ -1,17 +1,23 @@
-import express from "express";
+import express,{Request,Response} from "express";
 import { contentSchema, userSchema } from "./validations/userValidations";
-import { contentModel, UserModel } from "./db";
+import { contentModel, TagModel, UserModel } from "./db";
 import bcrypt from "bcrypt";
 import "./db";
 import jwt from "jsonwebtoken";
 
 import dotenv from "dotenv";
 import { authMiddleware } from "./validations/middleware";
+
+import mongoose from "mongoose";
 dotenv.config();
 
 
 const app = express();
 app.use(express.json());
+
+interface AuthRequest extends Request {
+  userId?: string;
+}
 
 app.post("/signup",async (req,res) => {
     try{
@@ -65,7 +71,7 @@ app.post("/signin",async(req,res) => {
             id : User._id,
         },process.env.JWT_USER_PASSWORD as string);
         res.status(200).json({
-            message : "SignUp SuccessFul!",
+            message : "SignIn SuccessFul!",
             token,
         });
     }
@@ -76,7 +82,7 @@ app.post("/signin",async(req,res) => {
     }
 })
 
-app.post("/content",authMiddleware,async(req,res) => {
+app.post("/content",authMiddleware,async(req:AuthRequest,res : Response) => {
     try{
         const content = contentSchema.safeParse(req.body);
         if(!content.success){
@@ -85,12 +91,28 @@ app.post("/content",authMiddleware,async(req,res) => {
                 errors : content.error.issues,
             })
         }
+        if (!req.userId) {
+        return res.status(403).json({
+        message: "Unauthorized",
+        });
+       }
+
         const{type,link,title,tags} = content.data;
+        const tagIds: mongoose.Types.ObjectId[] = [];
+        for(const tagTitle of tags){
+            let tag = await TagModel.findOne({title : tagTitle});
+            if(!tag){
+                tag = await TagModel.create({title : tagTitle});
+            }
+            tagIds.push(tag._id as mongoose.Types.ObjectId);
+        }
+        
         await contentModel.create({
             type,
             link,
             title,
-            tags
+            tags : tagIds,
+            userId : req.userId,
         });
         return res.status(200).json({
             message : "Contents Saved SuccessFully!"
@@ -105,7 +127,7 @@ app.post("/content",authMiddleware,async(req,res) => {
 })
 
 app.get("/content",(req,res) => {
-
+         
 })
 
 app.delete("/content",(req,res) => {

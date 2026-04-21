@@ -18,6 +18,12 @@ const userSchema = new Schema({
     password : String
 })
 
+const TagSchema = new Schema({
+  title : {
+    type : String, required : true,
+  }
+})
+
 const contentSchema = new Schema({
   type : {type : String,
     enum : ["document","tweet","youtube","link"],
@@ -31,11 +37,20 @@ const contentSchema = new Schema({
     type : String,
     required : true,
   },
-  tags : {
-    type : [String],
+  tags : [
+    {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Tag"
+    }
+  ],
+
+  userId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Users",
     required : true,
   }
-})
+});
 
+export const TagModel = model("Tag",TagSchema);
 export const contentModel = model("Content",contentSchema);
 export const UserModel = model("Users",userSchema);
