@@ -129,7 +129,7 @@ app.post("/content",authMiddleware,async(req:AuthRequest,res : Response) => {
 app.get("/content",authMiddleware,async(req : AuthRequest,res : Response) => {
     try{
         if(!req.userId){
-            return res.status(411).json({
+            return res.status(403).json({
                 message : "You are not authorized to access this!"
             })
         }
@@ -149,8 +149,32 @@ app.get("/content",authMiddleware,async(req : AuthRequest,res : Response) => {
     }
 })
 
-app.delete("/content",(req,res) => {
-
+app.delete("/content/:id",authMiddleware,async(req : AuthRequest,res : Response) => {
+    try{
+        if(!req.userId){
+            return res.status(403).json({
+                message : "You are not authorzed to delete the content!"
+            })
+        }
+        const contentId = req.params.id;
+        const deleted = await contentModel.deleteOne({
+            _id : contentId,
+            userId : req.userId,       
+        });
+        if(deleted.deletedCount === 0){
+            return res.status(404).json({
+                message : "Content not found or Unauthorized!"
+            })
+        }
+        return res.status(200).json({
+            message : "Content Deleted SuccessFully!"
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message : " Server Side Error"
+        })
+    }
 })
 
 app.post("/brain/share",(req,res) => {
@@ -164,3 +188,4 @@ app.get("/brain/sharedLink",(req,res) => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
+
