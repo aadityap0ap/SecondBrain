@@ -126,8 +126,27 @@ app.post("/content",authMiddleware,async(req:AuthRequest,res : Response) => {
     }
 })
 
-app.get("/content",(req,res) => {
-         
+app.get("/content",authMiddleware,async(req : AuthRequest,res : Response) => {
+    try{
+        if(!req.userId){
+            return res.status(411).json({
+                message : "You are not authorized to access this!"
+            })
+        }
+        const contents = await contentModel
+        .find({ userId: req.userId })
+        .populate("tags", "title")  // only tag title
+        .select("title link type tags"); // only these fields
+        return res.status(200).json({
+            message : "All Contents Fetched Successfully!",
+            contents
+        })
+    }
+    catch(error){
+        return res.status(500).json({
+            message : "Server Side Error"
+        })
+    }
 })
 
 app.delete("/content",(req,res) => {
