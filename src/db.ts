@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import {model,Schema} from "mongoose";
 
 import dotenv from "dotenv";
@@ -51,6 +51,21 @@ const contentSchema = new Schema({
   }
 });
 
+const linkSchema = new Schema({
+  userId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "User",
+    requires : true,
+    unique : true,
+  },
+  hash : {
+    type : String,
+    required : true,
+    unique : true,
+  },
+})
+
+export const linkModel = model("Links",linkSchema);
 export const TagModel = model("Tag",TagSchema);
 export const contentModel = model("Content",contentSchema);
 export const UserModel = model("Users",userSchema);

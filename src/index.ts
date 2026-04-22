@@ -1,9 +1,10 @@
 import express,{Request,Response} from "express";
 import { contentSchema, userSchema } from "./validations/userValidations";
-import { contentModel, TagModel, UserModel } from "./db";
+import { contentModel, linkModel, TagModel, UserModel } from "./db";
 import bcrypt from "bcrypt";
 import "./db";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import dotenv from "dotenv";
 import { authMiddleware } from "./validations/middleware";
@@ -177,8 +178,44 @@ app.delete("/content/:id",authMiddleware,async(req : AuthRequest,res : Response)
     }
 })
 
-app.post("/brain/share",(req,res) => {
+app.post("/brain/share",authMiddleware,async(req : AuthRequest,res : Response) => {
+    try{
+        if(!req.userId){
+            return res.status(403).json({
+                message : "You are not authorized!"
+            })
+        }
+        const { share } = req.body;
+        if(share){
+            const existingLink = await linkModel.findOne({
+                userId : req.userId,
+            })
+        
+        if(existingLink){
+            return res.json({
+                link : `http://localhost:3000/api/v1/brain/${existingLink.hash}`,
+            })
+        }
 
+        //if not then create new hash
+        const hash = crypto.randomBytes(10).toString("hex");
+        
+        await linkModel.create({
+            userId : req.userId,
+            hash,
+        })
+    
+    return res.status(200).json({
+        link: `http://localhost:3000/api/v1/brain/${hash}`,
+    })
+}
+    }
+    catch(error){
+        console.error("Share Error",error);
+        return res.status(500).json({
+            message : "Server Side Error!"
+        })
+    }
 })
 
 app.get("/brain/sharedLink",(req,res) => {
@@ -188,4 +225,3 @@ app.get("/brain/sharedLink",(req,res) => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
-
