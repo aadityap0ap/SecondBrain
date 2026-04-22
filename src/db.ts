@@ -54,8 +54,8 @@ const contentSchema = new Schema({
 const linkSchema = new Schema({
   userId : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : "User",
-    requires : true,
+    ref : "Users",
+    required : true,
     unique : true,
   },
   hash : {

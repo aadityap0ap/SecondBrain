@@ -218,9 +218,39 @@ app.post("/brain/share",authMiddleware,async(req : AuthRequest,res : Response) =
     }
 })
 
-app.get("/brain/sharedLink",(req,res) => {
+app.get("/brain/:sharedLink", async (req: Request, res: Response) => {
+  try {
+    const hash = req.params.sharedLink as string;
 
-})
+    const link = await linkModel.findOne({ hash : hash });
+    if (!link) {
+      return res.status(404).json({
+        message: "Invalid or disabled link",
+      });
+    }
+
+    const user = await UserModel.findById(link.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User Not Found!",
+      });
+    }
+
+    const contents = await contentModel.find({
+      userId: link.userId,
+    });
+
+    return res.status(200).json({
+      username: user.username,
+      content: contents,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server Side Error!",
+    });
+  }
+});
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
